@@ -1,7 +1,7 @@
 public class Bucket {
 
   /// COME UP WITH BETTER NAME GEEZE
-  private float w, h;
+  private float w, h, tempH;
   private PVector pos;
   private color c;
   private final int maxColor = 60;
@@ -12,7 +12,7 @@ public class Bucket {
     this.pos.x = x;
     this.pos.y = y;
     this.w = w;
-    this.h = h;
+    this.tempH = h;
     this.c = c;
   }
 
@@ -20,27 +20,29 @@ public class Bucket {
   {
     noStroke();
     fill(c);
+    
+    if (abs(h - tempH) > 5) h = lerp(h, tempH, .1);
+    else h = tempH;
+    
+    updatePosition ();
+    
     rect (pos.x, pos.y, w, h);
   }
 
   public void addColor (float amount)
   {
-    this.h+=amount;
+    this.tempH+=amount;
 
-    if (this.h < 0) this.h = 0;
-
-    updatePosition ();
+    if (this.tempH < 0) this.tempH = 0;
   }
 
   public void removeColor (float amount)
   {
-    if (this.h > 0) this.h -= amount;
+    if (this.tempH > 0) this.tempH -= amount;
 
-    if (this.h < amount) this.h = 0;
+    if (this.tempH < amount) this.tempH = 0;
     
     //println("Amount: " + amount + " - Height: " + this.h);
-    
-    updatePosition ();
   }
 
   private void updatePosition ()
@@ -55,12 +57,12 @@ public class Bucket {
   
   public float getHeight ()
   {
-    return this.h;
+    return this.tempH;
   }
   
   public boolean collide (float x, float y, float w, float h)
   {
-    if (pos.x > x && pos.y > y && pos.x < x+w && pos.y < y+h) return true;
+    if (pos.x > x && pos.y > y && pos.x < x+w && pos.y < y+tempH) return true;
 
     return false;
   }

@@ -2,16 +2,23 @@ private Rain rain;
 private Rainbow rainbow;
 private Filter filter;
 private int  score = 0;
+private int  points = 20;
+
+private PImage bg;
+private PImage hills;
+private PImage[] sun = new PImage[2];
+private int sunLoop = 0;
+
+private Timer animationTimer;
 
 private Cloud c1;
 private Cloud c2;
 private Cloud c3;
 
-
 void setup () {
 
   size (500, 720);
-  frameRate(30);
+  frameRate(60);
   load ();
 }
 
@@ -22,14 +29,25 @@ void load ()
   c2 = new Cloud (width/2.0, 15);
   c3 = new Cloud (width/5, 30);
   
+  bg = loadImage("img/spr_bg2.png");
+  hills = loadImage("img/spr_bg.png");
+  sun[0] = loadImage("img/spr_sun01.png");
+  sun[1] = loadImage("img/spr_sun02.png");
+  
   rain = new Rain();
   rainbow = new Rainbow();
   filter = new Filter(0, height-40, width/7.0, 20);
+  
+  animationTimer = new Timer(200);
+  animationTimer.start();
+  
+  score = 0;
 }
 
 void update ()
 {
   checkGameOver ();
+  drawBackground();
   rain.update ();
   rainbow.update ();
   c1.update();
@@ -58,9 +76,17 @@ void checkCollisions ()
     {
       if ( d2.getColor() == b.get(i).getColor()) 
       {
-        b.get(i).addColor (8.0);
+        b.get(i).addColor (points);
+        score += points;
+        
+        
+        
         checkBucketHeights ();
-      } else b.get(i).removeColor (16.0);
+      } else 
+      { 
+        b.get(i).removeColor (points * 1.5);
+        if (score >= points * 1.5) score-=points * 1.5;
+      }
       
       d2.die();
     }
@@ -77,10 +103,8 @@ void checkBucketHeights ()
   ArrayList<Bucket> b = rainbow.getBuckets ();
   float topHeight = 0;
   
-  score = 0;
   for (int i = 0; i < b.size(); i++)
   {
-    score += b.get(i).getHeight();
     if (b.get(i).getHeight() > topHeight) topHeight = b.get(i).getHeight();
   }
 
@@ -102,6 +126,28 @@ void keyPressed ()
     if (keyCode == UP) filter.changeColor(1);
     if (keyCode == DOWN) filter.changeColor(-1);
   }
+}
+
+public void drawBackground ()
+{
+    for (int i = 0; i < height; i+=20)
+    {
+      //image(bg, width/2, i); // = loadImage("img/spr_bg2.png");
+    }
+    
+    if (animationTimer.isDone())
+    {
+      if (sunLoop == 1) sunLoop = 0;
+      else sunLoop = 1;
+      
+      animationTimer = new Timer(200);
+      animationTimer.start();
+    } 
+    
+    //image(sun[sunLoop], width/2.0+25, 470);
+    
+
+    //image(hills, width/2.0, 600.0); //= loadImage("img/spr_bg.png");    
 }
 
 
