@@ -3,16 +3,25 @@ private Rainbow rainbow;
 private Filter filter;
 private int  score = 0;
 
+private Cloud c1;
+private Cloud c2;
+private Cloud c3;
+
 
 void setup () {
 
   size (500, 720);
-  frameRate(60);
+  frameRate(30);
   load ();
 }
 
 void load ()
 {
+  imageMode(CENTER);
+  c1 = new Cloud (width/1.25, 20);
+  c2 = new Cloud (width/2.0, 15);
+  c3 = new Cloud (width/5, 30);
+  
   rain = new Rain();
   rainbow = new Rainbow();
   filter = new Filter(0, height-40, width/7.0, 20);
@@ -23,6 +32,9 @@ void update ()
   checkGameOver ();
   rain.update ();
   rainbow.update ();
+  c1.update();
+  c2.update();
+  c3.update();
   filter.update ();
   checkCollisions ();
 }
@@ -92,3 +104,21 @@ void keyPressed ()
   }
 }
 
+
+public class Cloud {
+  PVector pos;
+  PImage cloud;
+  
+  Cloud (float x, float y) {
+    this.pos = new PVector(0,0);
+    cloud = loadImage ("img/spr_clouds.png");
+    
+    this.pos.x = x;
+    this.pos.y = y;
+  }
+  
+  public void update ()
+  {
+    image (cloud, pos.x, pos.y);
+  }
+}

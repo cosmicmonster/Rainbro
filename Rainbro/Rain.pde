@@ -60,6 +60,7 @@ public class Drop {
   private boolean kill = false;
   private color c = color(255,255,255);
   private boolean isFiltered = false;
+  private PImage rainDrop;
   
   Drop ()
   {
@@ -68,6 +69,8 @@ public class Drop {
     pos = new PVector(0,0);
     pos.x = getNewPos();
     dir.normalize();
+    rainDrop = loadImage("img/spr_drop.png");
+    rainDrop.resize((int)w,(int)(w*1.43));
   }
   
   public void update () 
@@ -89,7 +92,7 @@ public class Drop {
   {
     fill(c);
     
-    if (!isFiltered) rect (pos.x,pos.y, w, h);
+    if (!isFiltered) image (rainDrop, pos.x, pos.y); //rect (pos.x,pos.y, w, h);
     else { 
       this.w = 5;
       ellipse (pos.x+w/2, pos.y+w/2, w, w);
@@ -99,7 +102,6 @@ public class Drop {
   private float getNewPos ()
   {
     float t = width/14 + (2*(int)random(0,7))*width/14 -w/2;
-    println(t);
     return t;
   }
   
