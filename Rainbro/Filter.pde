@@ -61,6 +61,11 @@ public class Filter {
     c = colors.getColor(colorIndex);
   }
   
+  public void updatePosition (float topHeight)
+  {
+    dest.y = height - topHeight - this.h;
+  }
+  
   public color getColor ()
   {
     return this.c;

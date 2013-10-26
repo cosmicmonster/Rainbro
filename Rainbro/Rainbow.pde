@@ -2,10 +2,9 @@ public class Rainbow {
   
   private Colors colors = new Colors();
   private ArrayList<Bucket> buckets;
+  private boolean gameOver = false;
   
   Rainbow () {
-    
-    
     createBuckets ();
   }
   
@@ -29,12 +28,26 @@ public class Rainbow {
     for (int i = 0; i < buckets.size(); i++)
     {
       buckets.get(i).update();
+      if (buckets.get(i).h <= 0) { 
+        //println("--" + buckets.get(i).h);
+        gameOver = true;
+      }
     }
   }
   
   public boolean isEpic ()
   {
     return false;
+  }
+  
+  public ArrayList<Bucket> getBuckets ()
+  {
+    return buckets;
+  }
+  
+  public boolean checkGameOver ()
+  {
+    return gameOver;
   }
 }
 

@@ -2,11 +2,12 @@ public class Rain {
   
   private ArrayList<Drop> drops;
   Timer timer;
+  public int totalDrops = 0;
   
   Rain ()
   {
     drops = new ArrayList<Drop>();
-    timer = new Timer((int)random(1000,1100));
+    timer = new Timer((int)random(0,500));
     timer.start();
   }
   
@@ -17,7 +18,7 @@ public class Rain {
     if (timer.isDone ()) 
     {
       spawnDrop ();
-      timer = new Timer((int)random(1000,1100));
+      timer = new Timer((int)random(2000,3000));
       timer.start();      
     }
   }
@@ -25,6 +26,7 @@ public class Rain {
   private void spawnDrop ()
   {
     drops.add(new Drop());
+    totalDrops++;
     //println("What a glorious da.... wait shit it's raining :(");
   }
   
@@ -52,17 +54,18 @@ public class Rain {
 
 public class Drop {
   
-  private PVector pos;
+  public PVector pos;
   private PVector dir = new PVector(0, 1);
-  private float w,h;
+  public float w,h;
   private boolean kill = false;
   private color c = color(255,255,255);
+  private boolean isFiltered = false;
   
   Drop ()
   {
     this.w = 10;
     this.h = 10;
-    pos = new PVector(0,-h);
+    pos = new PVector(0,0);
     pos.x = getNewPos();
     dir.normalize();
   }
@@ -77,19 +80,27 @@ public class Drop {
   
   private void move ()
   {
-    dir.mult(1.01);
+    if (!isFiltered) dir.mult(1.01);
+    else { if (dir.mag() > 1) dir.mult(.7); }
     pos.add(dir);
   }
   
   private void drawDrop ()
   {
     fill(c);
-    rect (pos.x,pos.y, w, h);
+    
+    if (!isFiltered) rect (pos.x,pos.y, w, h);
+    else { 
+      this.w = 5;
+      ellipse (pos.x+w/2, pos.y+w/2, w, w);
+    }
   }
   
   private float getNewPos ()
   {
-    return width/14 + (2*(int)random(0,8))*width/14 -w/2;
+    float t = width/14 + (2*(int)random(0,7))*width/14 -w/2;
+    println(t);
+    return t;
   }
   
   public boolean isDead ()
@@ -97,9 +108,18 @@ public class Drop {
     return kill;
   }
   
+  public void die ()
+  {
+    kill = true;
+  }
+  
   public boolean collide (float x, float y, float w, float h)
   {
-    if (pos.x > x && pos.y > y && pos.x < x+w && pos.y < y+h) return true;
+    if (pos.x > x && pos.y > y && pos.x < x+w && pos.y < y+h) 
+    {
+      isFiltered = true;
+      return true;
+    }
     
     return false;
   }
@@ -108,5 +128,10 @@ public class Drop {
   {
     this.c = c; 
   }
+  
+  public color getColor ()
+  {
+    return c; 
+  }  
   
 }
