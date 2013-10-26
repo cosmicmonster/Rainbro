@@ -4,13 +4,12 @@ public class Rainbow {
   private ArrayList<Bucket> buckets;
   
   Rainbow () {
-    // God I miss contructors
     
     
-    createColors ();
+    createBuckets ();
   }
   
-  private void createColors ()
+  private void createBuckets ()
   {
     buckets = new ArrayList<Bucket>();
     

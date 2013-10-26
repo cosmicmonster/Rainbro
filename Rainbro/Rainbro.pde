@@ -28,7 +28,11 @@ void update ()
 
 void checkCollisions ()
 {
-  if (rain.collide(filter.pos.x, filter.pos.y, filter.w, filter.h)) println("a drain drop hit filter");
+  Drop d = rain.collide(filter.pos.x, filter.pos.y, filter.w, filter.h);
+  if (d != null)
+  {
+    d.changeColor (filter.getColor());
+  }
 }
 
 void draw () {
@@ -42,5 +46,8 @@ void keyPressed ()
   {
     if (keyCode == LEFT) filter.move(-1);
     else if (keyCode == RIGHT) filter.move(1);
+    
+    if (keyCode == UP) filter.changeColor(1);
+    if (keyCode == DOWN) filter.changeColor(-1);
   }
 }

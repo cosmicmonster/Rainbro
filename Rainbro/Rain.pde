@@ -6,7 +6,7 @@ public class Rain {
   Rain ()
   {
     drops = new ArrayList<Drop>();
-    timer = new Timer((int)random(2000,5000));
+    timer = new Timer((int)random(1000,1100));
     timer.start();
   }
   
@@ -37,16 +37,16 @@ public class Rain {
     }
   }
   
-  public boolean collide (float x, float y, float w, float h)
+  public Drop collide (float x, float y, float w, float h)
   {
     for (int i = 0; i < drops.size(); i++)
     {
       Drop d = drops.get(i);
       
-      if (d.collide(x,y,w,h)) return true;
+      if (d.collide(x,y,w,h)) return d;
     }
     
-    return false;
+    return null;
   }
 }
 
