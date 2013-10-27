@@ -37,7 +37,7 @@ public class Rain {
       stormTimer.start();
       timerInterval = 1150;
       stormInterval = null;
-      println("storm started @ " + millis());
+      //println("storm started @ " + millis());
     }
 
     if (timer.isDone ()) 
@@ -52,9 +52,9 @@ public class Rain {
     {
       stormTimer = null;
       timerInterval = 2000;
-      stormInterval = new Timer((int)random(30000, 60000));
+      stormInterval = new Timer((int)random(45000, 60000));
       stormInterval.start();
-      println("storm finished @ " + millis());
+      //("storm finished @ " + millis());
     }
   }
 
@@ -156,7 +156,7 @@ public class Drop {
     pos = new PVector(0, 0);
     pos.x = getNewPos();
     dir.normalize();
-    //rainDrop = loadImage("img/spr_drop.png");
+    //rainDrop = loadImage("data/spr_drop.png");
     //rainDrop.resize((int)w, (int)h);
   }
 

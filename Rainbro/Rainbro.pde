@@ -1,3 +1,5 @@
+import javax.swing.ImageIcon;
+
 private Rain rain;
 private Rainbow rainbow;
 private Filter filter;
@@ -38,6 +40,11 @@ void setup () {
 
   size (500, 720);
   frameRate(60);
+    
+  ImageIcon icon = new ImageIcon(loadBytes("icon.png"));
+  frame.setIconImage(icon.getImage());
+  
+  frame.setTitle ("Rainbro by Philipp Gullberg - BaconGameJam06");
 
   if (state == "menu") loadMenu();
 }
@@ -48,8 +55,7 @@ void loadMenu ()
   menuTimer.start();
   imageMode(CENTER);
   font = loadFont("Arial-Black-32.vlw");
-  bg_menu = loadImage("img/menu_bg.jpg");
-  println("press any key to continue");
+  bg_menu = loadImage("data/menu_bg.jpg");
 }
 
 void loadGameOver ()
@@ -88,15 +94,14 @@ void loadGame ()
 {
   imageMode(CENTER);
 
-
-  bg_gameover = loadImage("img/gameover_bg.jpg");
-  bg_gameover2 = loadImage("img/gameover2_bg.jpg");
-  storm = loadImage("img/spr_storm.png");
-  drops = loadImage("img/spr_drops.png");
-  x2 = loadImage("img/spr_x2.png");
-  x3 = loadImage("img/spr_x3.png");
-  winner = loadImage("img/spr_1.png");
-  skittles = loadImage("img/spr_skittles.png");  
+  bg_gameover = loadImage("data/gameover_bg.jpg");
+  bg_gameover2 = loadImage("data/gameover2_bg.jpg");
+  storm = loadImage("data/spr_storm.png");
+  drops = loadImage("data/spr_drops.png");
+  x2 = loadImage("data/spr_x2.png");
+  x3 = loadImage("data/spr_x3.png");
+  winner = loadImage("data/spr_1.png");
+  skittles = loadImage("data/spr_skittles.png");  
 
   rain = new Rain();
   rainbow = new Rainbow();
@@ -153,8 +158,8 @@ void checkCollisions ()
       } 
       else 
       { 
-        b.get(i).removeColor (points * 1.5);
-        if (score >= points * 1.5) score-=points * 1.5;
+        b.get(i).removeColor (points * 2);
+        if (score >= points * 2) score-=points * 2;
       }
 
       d2.die();
@@ -188,8 +193,9 @@ void draw () {
 
   if (state == "game")
   {
-    if (rain.isItStorming() && !lightningTimer.isDone()) { 
-      flicker();
+    if (rain.isItStorming() && !lightningTimer.isDone()) 
+    { 
+      lightning();
     }
     else bgColor = color(25, 25, 25);
 
@@ -205,20 +211,14 @@ void draw () {
   else if (state == "gameOver") gameOverUpdate();
 }
 
-void flicker ()
+void lightning ()
 {
-  //bgColor = lerpColor(bgColor, (int)random(255), .1);
+  bgColor = lerpColor(bgColor, color((int)random(200,255)), .2);
   //ambientLight(51, 102, 126);
 
-  if (lightningTimer == null)     
+  if (lightningTimer == null || lightningTimer.isDone() ) 
   {
-    lightningTimer = new Timer (2000);
-    lightningTimer.start();
-  }
-
-  if (lightningTimer.isDone()) 
-  {
-    lightningTimer = new Timer (2000);
+    lightningTimer = new Timer ((int)random(1000,3000));
     lightningTimer.start();
   }
 }
@@ -325,12 +325,12 @@ public void drawBackground ()
   rect (0, 600, width/4, 5);
 
   tint(255);
-  flicker ();
+  lightning ();
 }
 
 void checkUnlock (float topHeight)
 {
-  println (topHeight);
+  //println (topHeight);
   if (topHeight >= 120) 
   { 
     rain.allowEpicDrops = true;

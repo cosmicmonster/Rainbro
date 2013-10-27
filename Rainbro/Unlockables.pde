@@ -42,7 +42,7 @@ public class Unicorn
     dir.x = random(2) < 1 ? 1 : -1;
     dir.mult(3);
 
-    println(dir.x);
+   // println(dir.x);
     pos.x = dir.x > 0 ? -w : 500+w;
     randomY = random(h/2+amplitude, 720-h/2-amplitude);
 
