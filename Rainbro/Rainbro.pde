@@ -165,9 +165,9 @@ void checkCollisions ()
 void checkGameOver ()
 {
   if (rainbow.checkGameOver()) { 
-    //state = "gameOver"; 
-    //loadGameOver();
-  }//load();}
+    state = "gameOver"; 
+    loadGameOver();
+  }
 }
 
 void checkBucketHeights ()
@@ -362,7 +362,7 @@ void checkUnlock (float topHeight)
     filter.speed = .4;
   }
 
-  if (topHeight >= 20) { 
+  if (topHeight >= 420) { 
     rain.allowSkittles = true; 
     filter.speed = .6;
   }
