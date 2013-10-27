@@ -5,6 +5,11 @@ public class Rain {
   private Timer timer;
   public int totalDrops = 0;
   public boolean allowEpicDrops;
+  public boolean allowStorms;
+  private Timer stormTimer;
+  private Timer stormInterval;
+  
+  private int timerInterval = 2000;
 
   Rain ()
   {
@@ -12,19 +17,48 @@ public class Rain {
     splashes = new ArrayList<Splash>();
     timer = new Timer((int)random(0, 500));
     timer.start();
+    
+    stormInterval = new Timer((int)random(3000,6000));
+    stormInterval.start();
   }
 
   public void update ()
   {
     updateDrops ();
     updateSplash ();
+    
+    if (allowStorms && stormInterval != null && stormInterval.isDone())
+    {
+      stormTimer = new Timer (10000);
+      stormTimer.start();
+      timerInterval = 1150;
+      stormInterval = null;
+      println("storm started @ " + millis());
+    }
 
     if (timer.isDone ()) 
     {
       spawnDrop ();
-      timer = new Timer((int)random(2000, 3000));
+           
+      timer = new Timer((int)random(timerInterval, timerInterval*1.5));
       timer.start();
     }
+    
+    if (stormTimer != null && stormTimer.isDone ())
+    {
+      stormTimer = null;
+      timerInterval = 2000;
+      stormInterval = new Timer((int)random(30000,60000));
+      stormInterval.start();
+      println("storm finished @ " + millis());
+    }
+  }
+  
+  public boolean isItStorming ()
+  {
+    if (stormTimer == null) return false;
+    
+    return true;
   }
 
   private void spawnDrop ()
@@ -99,6 +133,11 @@ public class Drop {
     sizes[2] = 20;
 
     return sizes[(int)random(0, 3)];
+  }
+  
+  public float getPoints ()
+  {
+    return this.w;
   }
 
   public void update () 

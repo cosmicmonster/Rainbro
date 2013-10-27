@@ -5,35 +5,69 @@ private Rainbow rainbow;
 private Filter filter;
 private int  score = 0;
 private int  points = 20;
+private Colors colors = new Colors();
 
 private PImage bg;
 private PImage hills;
 private PImage[] sun = new PImage[2];
 private int sunLoop = 0;
 
+private color bgColor;
 private Timer animationTimer;
-
-private Cloud c1;
-private Cloud c2;
-private Cloud c3;
 
 private Unlockables unlockables = new Unlockables();
 private Unicorn unibro = new Unicorn();
 private Timer unibroTimer;
+private Timer lightningTimer;
+
+private PFont font;
+
+private float scoreMultiplier = 1;
+
+private String state = "menu";
 
 void setup () {
 
   size (500, 720);
   frameRate(60);
-  load ();
+  
+  if (state == "menu") loadMenu();
 }
 
-void load ()
+void loadMenu ()
+{
+  font = loadFont("Ebrima-Bold-32.vlw");
+  println("press any key to continue");
+}
+
+void loadGameOver ()
+{
+
+}
+
+void gameOverUpdate ()
+{
+  background(25,25,25);
+  
+  textFont(font, 32);
+  textAlign(CENTER);
+  text("GAME OVER BRO!", width/2, height/2);
+  fill (colors.getColor((int)random(0,7)));
+  text("SCORE: " + score, width/2, height/2+ 40);
+}
+
+void menuUpdate ()
+{
+  background(25,25,25);
+  
+  textFont(font, 32);
+  textAlign(CENTER);
+  //text("CATCH RAIN DROPS[left&right keys]\n SWAP COLOR [up&down keys]", width/2, height/2);
+}
+
+void loadGame ()
 {
   imageMode(CENTER);
-  c1 = new Cloud (width/1.25, 20);
-  c2 = new Cloud (width/2.0, 15);
-  c3 = new Cloud (width/5, 30);
   
   bg = loadImage("img/bg.jpg");
   hills = loadImage("img/spr_bg.png");
@@ -53,9 +87,10 @@ void load ()
 void update ()
 {
   checkGameOver ();
-  drawBackground();
+  
   rain.update ();
   rainbow.update ();
+  drawBackground();
   updateUnlockables();
   filter.update ();
   checkCollisions ();
@@ -80,8 +115,10 @@ void checkCollisions ()
     {
       if ( d2.getColor() == b.get(i).getColor()) 
       {
+        points = (int)d2.getPoints()*4;
         b.get(i).addColor (points);
-        score += points;
+        println(scoreMultiplier);
+        score += points * scoreMultiplier;
         checkBucketHeights ();
       } else 
       { 
@@ -96,7 +133,7 @@ void checkCollisions ()
 
 void checkGameOver ()
 {
-   if (rainbow.checkGameOver()) { println("GAME OVER! Score: " + score); }//load();} 
+   if (rainbow.checkGameOver()) { state = "gameOver"; loadGameOver();}//load();} 
 }
 
 void checkBucketHeights ()
@@ -114,33 +151,69 @@ void checkBucketHeights ()
 }
 
 void draw () {
-  background(25, 25, 25);
+  
+  if (state == "game")
+  {
+  if (rain.isItStorming() && !lightningTimer.isDone()) { flicker(); }
+  else bgColor = color(25,25,25);
+  
+  background(bgColor);
   update ();
+  
+  fill(255);
+  textFont(font,14);
+  text("SCORE: " + score, width-100.0, 20);
+  } else if (state == "menu") menuUpdate();
+  else if (state == "gameOver") gameOverUpdate();
+}
+
+void flicker ()
+{
+  //bgColor = lerpColor(bgColor, (int)random(255), .1);
+  //ambientLight(51, 102, 126);
+  
+  if(lightningTimer == null)     
+  {
+    lightningTimer = new Timer (2000);
+    lightningTimer.start();
+  }
+  
+  if (lightningTimer.isDone()) 
+  {
+    lightningTimer = new Timer (2000);
+    lightningTimer.start();
+  }
 }
 
 void keyPressed ()
 {
-  if (key == CODED) 
+  if (state == "game")
   {
-    if (keyCode == LEFT) filter.move(-1);
-    else if (keyCode == RIGHT) filter.move(1);
-
-    if (keyCode == UP) filter.changeColor(1);
-    if (keyCode == DOWN) filter.changeColor(-1);
+    if (key == CODED) 
+    {
+      if (keyCode == LEFT) filter.move(-1);
+      else if (keyCode == RIGHT) filter.move(1);
+  
+      if (keyCode == UP) filter.changeColor(1);
+      if (keyCode == DOWN) filter.changeColor(-1);
+    }
+  }
+  if (state == "menu")
+  {
+    loadGame();
+    state = "game";
+  }
+  else if (state == "gameOver")
+  {
+    state = "menu";
+    loadMenu ();
   }
   
-  if (key == ' ') filter.shoot();// sound.play("asdasd");
+  //if (key == ' ') filter.shoot();// sound.play("asdasd");
 }
 
 public void drawBackground ()
 {
-    for (int i = 0; i < height; i+=20)
-    {
-      //image(bg, width/2, i); // = loadImage("img/spr_bg2.png");
-    }
-    
-    //image(bg, width/2, height/2);
-    
     fill(255, 127);
     rect (0, 100, width/4, 5);
     rect (0, 200, width/4, 5);
@@ -149,52 +222,27 @@ public void drawBackground ()
     rect (0, 500, width/4, 5);
     rect (0, 600, width/4, 5);
     
-    if (animationTimer.isDone())
-    {
-      if (sunLoop == 1) sunLoop = 0;
-      else sunLoop = 1;
-      
-      animationTimer = new Timer(200);
-      animationTimer.start();
-    } 
-    
-    //image(sun[sunLoop], width/2.0+25, 470);
-    
-
-    //image(hills, width/2.0, 600.0); //= loadImage("img/spr_bg.png");    
+    flicker ();
 }
 
 void checkUnlock (float topHeight)
 {
-    if (topHeight >= 120) unlockables.allowDrops = true;
-    if (topHeight >= 220) unlockables.allowMult2 = true;
-    if (topHeight >= 320) println("3rd level");
-    if (topHeight >= 420) println("4th level");
+    if (topHeight >= 120) { rain.allowEpicDrops = true; }
+    else { rain.allowEpicDrops = false; }
+    
+    if (topHeight >= 220) { rain.allowStorms = true; }
+    else { rain.allowStorms = false; }
+    
+    if (topHeight >= 420) { scoreMultiplier = 3; }
+    else if (topHeight >= 320) scoreMultiplier = 2;
+    else scoreMultiplier = 1;  
+    
     if (topHeight >= 520) println("5th level");
     if (topHeight >= 620) println("6th level");
 }
 
 void updateUnlockables ()
 {
-  updateUnibro ();
+  //updateUnibro ();
 }
 
-
-
-public class Cloud {
-  PVector pos;
-  PImage cloud;
-  
-  Cloud (float x, float y) {
-    this.pos = new PVector(0,0);
-    cloud = loadImage ("img/spr_clouds.png");
-    
-    this.pos.x = x;
-    this.pos.y = y;
-  }
-  
-  public void update ()
-  {
-    image (cloud, pos.x, pos.y);
-  }
-}

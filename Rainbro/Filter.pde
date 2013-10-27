@@ -30,10 +30,12 @@ public class Filter {
     if (dir == 1) 
     { 
       if (pos.x < width-w) dest.x = pos.x + w;
+      else { pos.x = -w; dest.x = pos.x + w;}
     }
     else 
     {
       if (pos.x > 0) dest.x = pos.x - w; 
+      else { pos.x = width; dest.x = pos.x - w;}
     }
   }
   
