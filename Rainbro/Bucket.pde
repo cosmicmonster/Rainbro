@@ -5,7 +5,12 @@ public class Bucket {
   private PVector pos;
   private color c;
   private final int maxColor = 60;
+  
+  Bucket ()
+  {
 
+  }
+  
   Bucket (float x, float y, float w, float h, color c)
   {
     pos = new PVector(0, 0);

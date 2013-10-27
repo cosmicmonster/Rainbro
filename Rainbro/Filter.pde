@@ -6,7 +6,7 @@ public class Filter {
   private Colors colors = new Colors();
   private color c = color(0,255,255);
   private int colorIndex = 0;
-  private float speed = .4; // needs to be < 1
+  public float speed = .4; // needs to be < 1
   private Lazor lazor;
   
   Filter (float x, float y, float w, float h)
