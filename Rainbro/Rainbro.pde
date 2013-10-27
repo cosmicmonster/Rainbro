@@ -7,7 +7,8 @@ private int  score = 0;
 private int  points = 20;
 private Colors colors = new Colors();
 
-private PImage bg;
+private PImage bg_menu;
+private PImage bg_gameover;
 private PImage hills;
 private PImage[] sun = new PImage[2];
 private int sunLoop = 0;
@@ -36,7 +37,9 @@ void setup () {
 
 void loadMenu ()
 {
+  imageMode(CENTER);
   font = loadFont("Ebrima-Bold-32.vlw");
+  bg_menu = loadImage("img/menu_bg.jpg");
   println("press any key to continue");
 }
 
@@ -49,19 +52,19 @@ void gameOverUpdate ()
 {
   background(25,25,25);
   
-  textFont(font, 32);
-  textAlign(CENTER);
-  text("GAME OVER BRO!", width/2, height/2);
-  fill (colors.getColor((int)random(0,7)));
-  text("SCORE: " + score, width/2, height/2+ 40);
+  image (bg_gameover, width/2, height/2);
 }
 
 void menuUpdate ()
 {
   background(25,25,25);
   
+  image (bg_menu, width/2, height/2);
+  
   textFont(font, 32);
   textAlign(CENTER);
+  
+  
   //text("CATCH RAIN DROPS[left&right keys]\n SWAP COLOR [up&down keys]", width/2, height/2);
 }
 
@@ -69,7 +72,8 @@ void loadGame ()
 {
   imageMode(CENTER);
   
-  bg = loadImage("img/bg.jpg");
+
+  bg_gameover = loadImage("img/gameover_bg.jpg");
   hills = loadImage("img/spr_bg.png");
   sun[0] = loadImage("img/spr_sun01.png");
   sun[1] = loadImage("img/spr_sun02.png");
@@ -162,7 +166,8 @@ void draw () {
   
   fill(255);
   textFont(font,14);
-  text("SCORE: " + score, width-100.0, 20);
+  textAlign(RIGHT);
+  text("SCORE\n" + score, width-5, 20);
   } else if (state == "menu") menuUpdate();
   else if (state == "gameOver") gameOverUpdate();
 }
