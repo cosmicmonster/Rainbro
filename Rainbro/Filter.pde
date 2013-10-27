@@ -7,6 +7,7 @@ public class Filter {
   private color c = color(0,255,255);
   private int colorIndex = 0;
   private float speed = .4; // needs to be < 1
+  private Lazor lazor;
   
   Filter (float x, float y, float w, float h)
   {
@@ -19,6 +20,7 @@ public class Filter {
     this.h = h;
     
     c = colors.getColor(colorIndex);
+    lazor = new Lazor(pos, w);
   }
   
   private void move (int dir)
@@ -33,12 +35,17 @@ public class Filter {
     {
       if (pos.x > 0) dest.x = pos.x - w; 
     }
-
   }
   
   public void update ()
   {
     drawFilter ();
+    lazor.update ();
+  }
+  
+  public void shoot ()
+  {
+    lazor.shoot();
   }
   
   private void drawFilter ()

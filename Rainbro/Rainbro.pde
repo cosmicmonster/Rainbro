@@ -1,3 +1,5 @@
+import ddf.minim.*;
+
 private Rain rain;
 private Rainbow rainbow;
 private Filter filter;
@@ -15,6 +17,10 @@ private Cloud c1;
 private Cloud c2;
 private Cloud c3;
 
+private Unlockables unlockables = new Unlockables();
+private Unicorn unibro = new Unicorn();
+private Timer unibroTimer;
+
 void setup () {
 
   size (500, 720);
@@ -29,7 +35,7 @@ void load ()
   c2 = new Cloud (width/2.0, 15);
   c3 = new Cloud (width/5, 30);
   
-  bg = loadImage("img/spr_bg2.png");
+  bg = loadImage("img/bg.jpg");
   hills = loadImage("img/spr_bg.png");
   sun[0] = loadImage("img/spr_sun01.png");
   sun[1] = loadImage("img/spr_sun02.png");
@@ -50,9 +56,7 @@ void update ()
   drawBackground();
   rain.update ();
   rainbow.update ();
-  c1.update();
-  c2.update();
-  c3.update();
+  updateUnlockables();
   filter.update ();
   checkCollisions ();
 }
@@ -78,9 +82,6 @@ void checkCollisions ()
       {
         b.get(i).addColor (points);
         score += points;
-        
-        
-        
         checkBucketHeights ();
       } else 
       { 
@@ -95,7 +96,7 @@ void checkCollisions ()
 
 void checkGameOver ()
 {
-   if (rainbow.checkGameOver()) { println("GAME OVER! Score: " + score); load();} 
+   if (rainbow.checkGameOver()) { println("GAME OVER! Score: " + score); }//load();} 
 }
 
 void checkBucketHeights ()
@@ -107,7 +108,8 @@ void checkBucketHeights ()
   {
     if (b.get(i).getHeight() > topHeight) topHeight = b.get(i).getHeight();
   }
-
+  
+  checkUnlock (topHeight);
   filter.updatePosition (topHeight);
 }
 
@@ -126,6 +128,8 @@ void keyPressed ()
     if (keyCode == UP) filter.changeColor(1);
     if (keyCode == DOWN) filter.changeColor(-1);
   }
+  
+  if (key == ' ') filter.shoot();// sound.play("asdasd");
 }
 
 public void drawBackground ()
@@ -134,6 +138,16 @@ public void drawBackground ()
     {
       //image(bg, width/2, i); // = loadImage("img/spr_bg2.png");
     }
+    
+    //image(bg, width/2, height/2);
+    
+    fill(255, 127);
+    rect (0, 100, width/4, 5);
+    rect (0, 200, width/4, 5);
+    rect (0, 300, width/4, 5);
+    rect (0, 400, width/4, 5);
+    rect (0, 500, width/4, 5);
+    rect (0, 600, width/4, 5);
     
     if (animationTimer.isDone())
     {
@@ -149,6 +163,22 @@ public void drawBackground ()
 
     //image(hills, width/2.0, 600.0); //= loadImage("img/spr_bg.png");    
 }
+
+void checkUnlock (float topHeight)
+{
+    if (topHeight >= 120) unlockables.allowDrops = true;
+    if (topHeight >= 220) unlockables.allowMult2 = true;
+    if (topHeight >= 320) println("3rd level");
+    if (topHeight >= 420) println("4th level");
+    if (topHeight >= 520) println("5th level");
+    if (topHeight >= 620) println("6th level");
+}
+
+void updateUnlockables ()
+{
+  updateUnibro ();
+}
+
 
 
 public class Cloud {

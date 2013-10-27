@@ -64,7 +64,7 @@ public class Colors {
   Colors () 
   {
     
-  }
+  }  
   
   // This is ugly, but I don't care
   public color getColor(int i)

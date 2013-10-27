@@ -2,8 +2,9 @@ public class Rain {
 
   private ArrayList<Drop> drops;
   private ArrayList<Splash> splashes;
-  Timer timer;
+  private Timer timer;
   public int totalDrops = 0;
+  public boolean allowEpicDrops;
 
   Rain ()
   {
@@ -28,7 +29,8 @@ public class Rain {
 
   private void spawnDrop ()
   {
-    drops.add(new Drop());
+    drops.add(new Drop(allowEpicDrops));
+    
     totalDrops++;
   }
 
@@ -36,7 +38,10 @@ public class Rain {
   {
     for (int i = 0; i < drops.size(); i++)
     {
-      if (drops.get(i).isDead()) drops.remove(i);
+      if (drops.get(i).isDead()) {
+        splashes.add(new Splash(drops.get(i).pos, 20, drops.get(i).getColor()));
+        drops.remove(i);
+      }
       else drops.get(i).update();
     }
   }
@@ -45,7 +50,8 @@ public class Rain {
   {
     for (int i = 0; i < splashes.size(); i++)
     {
-      splashes.get(i).update();
+      if (splashes.get(i).kill) splashes.remove(i);
+      else splashes.get(i).update();
     }
   }
 
@@ -71,16 +77,28 @@ public class Drop {
   private color c = color(255, 255, 255);
   private boolean isFiltered = false;
   private PImage rainDrop;
+  private float[] sizes = new float[3];
 
-  Drop ()
+  Drop (boolean allowEpicDrops)
   {
-    this.w = 10;
-    this.h = 10;
+    if (allowEpicDrops) this.w = randomSize();
+    else this.w = 10;
+    
+    this.h = w*1.43;
     pos = new PVector(0, 0);
     pos.x = getNewPos();
     dir.normalize();
-    rainDrop = loadImage("img/spr_drop.png");
-    rainDrop.resize((int)w, (int)(w*1.43));
+    //rainDrop = loadImage("img/spr_drop.png");
+    //rainDrop.resize((int)w, (int)h);
+  }
+
+  private float randomSize ()
+  {
+    sizes[0] = 10;
+    sizes[1] = 15;
+    sizes[2] = 20;
+
+    return sizes[(int)random(0, 3)];
   }
 
   public void update () 
@@ -111,7 +129,7 @@ public class Drop {
   {
     fill(c);
 
-    if (!isFiltered) image (rainDrop, pos.x, pos.y); //rect (pos.x,pos.y, w, h);
+    if (!isFiltered) ellipse (pos.x,pos.y, w, w);//image (rainDrop, pos.x, pos.y); 
     else { 
       this.w = 5;
       ellipse (pos.x+w/2, pos.y+w/2, w, w);
@@ -120,7 +138,7 @@ public class Drop {
 
   private float getNewPos ()
   {
-    float t = width/14 + (2*(int)random(0, 7))*width/14 -w/2;
+    float t = width/14 + (2*(int)random(0, 7))*width/14;
     return t;
   }
 
