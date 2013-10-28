@@ -152,14 +152,14 @@ void checkCollisions ()
       
       if ( d2.getColor() == b.get(i).getColor()) 
       {  
-        b.get(i).addColor (points*2);
+        b.get(i).addColor (points*4);
         score += points * scoreMultiplier;
         checkBucketHeights ();
       } 
       else 
       { 
-        b.get(i).removeColor (points * 2);
-        if (score >= points * 2) score-=points * 2;
+        b.get(i).removeColor (points * 4);
+        if (score >= points * 4) score-=points * 4;
       }
 
       d2.die();
@@ -237,8 +237,8 @@ void keyPressed ()
 
       if (keyCode == CONTROL) 
       {
-        //rainbow.getBuckets().get(0).addColor(50);
-        //checkUnlock (rainbow.getBuckets().get(0).getHeight());
+        rainbow.getBuckets().get(0).addColor(50);
+        checkUnlock (rainbow.getBuckets().get(0).getHeight());
       }
     }
   }
@@ -389,20 +389,19 @@ void checkSkittles ()
   
   if (skittleTimer.isDone ())
   {
-    skittleTimer = new Timer ((int) random(30000,45000));
+    skittleTimer = new Timer ((int) random(20000,40000));
     skittleTimer.start ();
     
     Bucket b = rainbow.getBuckets().get(getLowestBucket());
     
     rain.spawnSkittle(b.pos.x+(b.w/2), 0, b.getColor());
   }
-
 }
 
 int getLowestBucket ()
 {
   ArrayList<Bucket> b = rainbow.getBuckets ();
-  float minHeight = height;
+  float minHeight = 100000;
   int bucky = 0;
 
   for (int i = 0; i < b.size(); i++)
